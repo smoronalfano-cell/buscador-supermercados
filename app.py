@@ -90,11 +90,14 @@ def extraer_categoria_tamano(nombre):
 def cumple_filtro_busqueda(nombre_prod, marca_prod, termino_busqueda):
     stopwords = {"de", "del", "la", "las", "el", "los", "en", "para", "con", "sin", "y", "a"}
     
-    palabras_busqueda = set(re.findall(r'\w+', termino_busqueda.lower())) - stopwords
+    # Extraer palabras de la búsqueda ignorando las stopwords
+    palabras_busqueda = set(re.findall(r'\b\w+\b', termino_busqueda.lower())) - stopwords
     texto_evaluar = f"{nombre_prod} {marca_prod}".lower()
     
     for palabra in palabras_busqueda:
-        if palabra not in texto_evaluar:
+        # Exige la palabra completa exacta (para que "natura" no coincida con "naturales")
+        pattern = r'\b' + re.escape(palabra) + r'\b'
+        if not re.search(pattern, texto_evaluar):
             return False
             
     return True
